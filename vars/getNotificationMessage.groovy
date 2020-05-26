@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 import org.jenkinsci.plugins.workflow.cps.RunWrapperBinder
 
-def getNotificationMessage(RunWrapperBinder buildData) {
+def call(RunWrapperBinder buildData) {
     def message = []
     message.add("[${buildData.fullProjectName} #${buildData.number}](${buildData.absoluteUrl})")
     message.add(currentBuild.result)
