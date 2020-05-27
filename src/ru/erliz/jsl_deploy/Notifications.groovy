@@ -1,14 +1,11 @@
 package ru.erliz.jsl_deploy
 
-import org.jenkinsci.plugins.workflow.cps.RunWrapperBinder
-import java.lang.String
-
 class Notifications implements Serializable {
-    String getBuildTriggerCause (RunWrapperBinder buildData) {
+    def getBuildTriggerCause (buildData) {
         return "Launched manually by ${buildData.getBuildCauses('hudson.model.Cause$UserIdCause')[0].userName}"
     }
     
-    String getChangelog (RunWrapperBinder buildData) {
+    def getChangelog (buildData) {
         def resultLines = []
         def changeLogSets = buildData.changeSets
         for (int i = 0; i < changeLogSets.size(); i++) {
@@ -22,7 +19,7 @@ class Notifications implements Serializable {
         return resultLines.join("\n")
     }
     
-    String getNotificationMessage (RunWrapperBinder buildData) {
+    def getNotificationMessage (buildData) {
         def message = []
         message.add("[${buildData.fullProjectName} #${buildData.number}](${buildData.absoluteUrl})")
         message.add(currentBuild.result)
