@@ -22,8 +22,8 @@ class Notifications implements Serializable {
     def getNotificationMessage (buildData) {
         def message = []
         message.add("[${buildData.fullProjectName} #${buildData.number}](${buildData.absoluteUrl})")
-        message.add(currentBuild.result)
-        def changeLog = getChangelog(currentBuild)
+        message.add(buildData.result)
+        def changeLog = getChangelog(buildData)
         message.add(changeLog.length() > 0 ? changeLog : getCause(buildData))
 
         return message.join("\n")
