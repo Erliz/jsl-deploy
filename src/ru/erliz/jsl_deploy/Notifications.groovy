@@ -22,7 +22,7 @@ class Notifications implements Serializable {
     def getNotificationMessage (buildData) {
         def message = []
         message.add("[${buildData.fullProjectName} #${buildData.number}](${buildData.absoluteUrl})")
-        message.add("${buildData.result == 'SUCCESS' ? '\\u2705' : '\\u274C'} ${buildData.result}")
+        message.add("${buildData.result == 'SUCCESS' ? '✅' : '❌'} ${buildData.result}")
         def changeLog = getChangelog(buildData)
         message.add(changeLog.length() > 0 ? changeLog : getBuildTriggerCause(buildData))
 
