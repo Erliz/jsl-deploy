@@ -19,12 +19,12 @@ class Notifications implements Serializable {
         return resultLines.join("\n")
     }
     
-    def getNotificationMessage (buildData) {
+    def getNotificationMessage (buildData, url) {
         def failureIcon = "\u274C"
         def successIcon = "\u2705"
         def statusIcon = buildData.result == 'SUCCESS' ? successIcon : failureIcon
         def message = []
-        message.add("[${buildData.fullProjectName} #${buildData.number}](${buildData.absoluteUrl})")
+        message.add("[${buildData.fullProjectName} #${buildData.number}](${url})")
         message.add("${statusIcon} ${buildData.result}")
         def changeLog = getChangelog(buildData)
         message.add(changeLog.length() > 0 ? changeLog : getBuildTriggerCause(buildData))
