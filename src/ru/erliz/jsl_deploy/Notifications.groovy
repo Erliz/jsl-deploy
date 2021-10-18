@@ -3,7 +3,7 @@ package ru.erliz.jsl_deploy
 class Notifications implements Serializable {
     def getBuildTriggerCause (buildData) {
         def userName = 'unknown'
-        if (buildData.getBuildCauses('hudson.model.Cause$UserIdCause').size > 0) {
+        if (buildData.getBuildCauses('hudson.model.Cause$UserIdCause').size() > 0) {
             userName = buildData.getBuildCauses('hudson.model.Cause$UserIdCause')[0].userName
         }
         return "Launched manually by ${userName}"
@@ -27,13 +27,14 @@ class Notifications implements Serializable {
         def message = []
         message.add("[${buildData.fullProjectName} #${buildData.number}](${url})")
         message.add("${statusIcon} ${buildData.result}")
-        def changeLog
+        def changeLog = "Empty change log"
         try {
             changeLog = getChangelog(buildData)
         } catch(err) {
             changeLog = "Unable to get changelog: ${err}"
         }
-        message.add(changeLog.length() > 0 ? changeLog : getBuildTriggerCause(buildData))
+        message.add(changeLog)
+        message.add(getBuildTriggerCause(buildData))
 
         return message.join("\n")
     }
