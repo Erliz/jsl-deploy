@@ -2,7 +2,11 @@ package ru.erliz.jsl_deploy
 
 class Notifications implements Serializable {
     def getBuildTriggerCause (buildData) {
-        return "Launched manually by ${buildData.getBuildCauses('hudson.model.Cause$UserIdCause')[0].userName}"
+        def userName = 'unknown'
+        if (buildData.getBuildCauses('hudson.model.Cause$UserIdCause').size > 0) {
+            userName = buildData.getBuildCauses('hudson.model.Cause$UserIdCause')[0].userName
+        }
+        return "Launched manually by ${userName}"
     }
     
     def getChangelog (buildData) {
