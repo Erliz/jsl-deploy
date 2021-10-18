@@ -11,11 +11,8 @@ class Notifications implements Serializable {
     
     def getChangelog (buildData) {
         def resultLines = []
-        def changeLogSets = buildData.changeSets
-        for (int i = 0; i < changeLogSets.size(); i++) {
-            def entries = changeLogSets[i].items
-            for (int j = 0; j < entries.length; j++) {
-                def entry = entries[j]
+        buildData.changeSets.each { k, sets ->
+            sets.each { sk, entry ->
                 resultLines.add("${entry.author}: ${entry.msg}")
             }
         }
