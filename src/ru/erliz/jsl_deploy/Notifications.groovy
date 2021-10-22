@@ -25,7 +25,7 @@ class Notifications implements Serializable {
         def successIcon = "\u2705"
         def statusIcon = buildData.result == 'SUCCESS' ? successIcon : failureIcon
         def message = []
-        message.add("<${buildData.fullProjectName} #${buildData.number}|${url}>")
+        message.add("<${url}|${buildData.fullProjectName} #${buildData.number}>")
         message.add("${statusIcon} ${buildData.result}")
         def changeLog = "Empty change log"
         try {
