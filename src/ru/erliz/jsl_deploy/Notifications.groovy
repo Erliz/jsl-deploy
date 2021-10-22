@@ -2,18 +2,28 @@ package ru.erliz.jsl_deploy
 
 class Notifications implements Serializable {
     def getBuildTriggerCause (buildData) {
-        def userName = 'unknown'
         if (buildData.getBuildCauses('hudson.model.Cause$UserIdCause').size() > 0) {
-            userName = buildData.getBuildCauses('hudson.model.Cause$UserIdCause')[0].userName
+            def name = buildData.getBuildCauses('hudson.model.Cause$UserIdCause')[0].userName
+    
+            return "Launched manually by ${name}"
         }
-        return "Launched manually by ${userName}"
+
+        return "Launched on push by ${getLastChangeAuthorName(buildData)}"
+    }
+    
+    def getLastChangeAuthorName (buildData) {
+        return buildData.changeSets.size() > 0 ? buildData.changeSets.first().first().committer : 'unknown'
     }
     
     def getChangelog (buildData) {
         def resultLines = []
-        buildData.changeSets.each { k, sets ->
-            sets.each { sk, entry ->
-                resultLines.add("${entry.author}: ${entry.msg}")
+        def passedBuilds = appendFailedBeforeBuilds([buildData], buildData)
+        passedBuilds.each { build ->
+            build.changeSets.each { sets ->
+                sets.each { entry ->
+                    // todo change some day to entry.getAuthor().getDisplayName()
+                    resultLines.add("${entry.committer}: ${entry.getMsg()}")
+                }
             }
         }
 
@@ -37,5 +47,13 @@ class Notifications implements Serializable {
         message.add(getBuildTriggerCause(buildData))
 
         return message.join("\n")
+    }
+    
+    def appendFailedBeforeBuilds(passedBuilds, build) {
+        if ((build != null) && (build.result != 'SUCCESS')) {
+            passedBuilds.add(build)
+            return lastSuccessfulBuild(passedBuilds, build.getPreviousBuild())
+        }
+        return passedBuilds
     }
 }
