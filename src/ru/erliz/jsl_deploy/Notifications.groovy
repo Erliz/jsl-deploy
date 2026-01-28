@@ -17,13 +17,15 @@ class Notifications implements Serializable {
     
     def getChangelog (buildData) {
         def resultLines = []
-        def passedBuilds = appendFailedBeforeBuilds([buildData], buildData)
+        def passedBuilds = appendFailedBeforeBuilds([buildData], buildData.getPreviousBuild())
         passedBuilds.each { build ->
-            build.changeSets.each { sets ->
-                sets.each { entry ->
+            build.changeSets.each { changeSet -> 
+                def setLines = []
+                changeSet.each { entry ->
                     // todo change some day to entry.getAuthor().getDisplayName()
-                    resultLines.add("${entry.committer}: ${entry.getMsg()}")
+                    setLines.add("${entry.committer}: ${entry.getMsg()}")
                 }
+                resultLines += setLines.reverse()
             }
         }
 
@@ -48,11 +50,11 @@ class Notifications implements Serializable {
 
         return message.join("\n")
     }
-    
+
     def appendFailedBeforeBuilds(passedBuilds, build) {
         if ((build != null) && (build.result != 'SUCCESS')) {
             passedBuilds.add(build)
-            return lastSuccessfulBuild(passedBuilds, build.getPreviousBuild())
+            return appendFailedBeforeBuilds(passedBuilds, build.getPreviousBuild())
         }
         return passedBuilds
     }
